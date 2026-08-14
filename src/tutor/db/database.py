@@ -43,6 +43,33 @@ def init_db() -> None:
             )
             """
         )
+        connection.execute(
+        """
+            CREATE TABLE IF NOT EXISTS answers (
+                id TEXT PRIMARY KEY,
+                question_id TEXT NOT NULL,
+                answer TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY (question_id) REFERENCES questions(id)
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS evaluations (
+                id TEXT PRIMARY KEY,
+                answer_id TEXT NOT NULL UNIQUE,
+                score INTEGER NOT NULL CHECK (score BETWEEN 0 AND 100),
+                feedback TEXT NOT NULL,
+                strengths TEXT NOT NULL,
+                gaps TEXT NOT NULL,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY (answer_id) REFERENCES answers(id)
+            )
+            """
+        )
         
 if __name__ == "__main__":
     init_db()

@@ -88,6 +88,35 @@ def get_pending_questions(
         for row in rows
     ]
     
+def get_question(question_id: str) -> Question | None:
+    with get_connection() as connection:
+        row = connection.execute(
+            """
+            SELECT
+                id,
+                book_id,
+                question,
+                topic,
+                difficulty,
+                reference_context
+            FROM questions
+            WHERE id = ?
+            """,
+            (question_id,),
+        ).fetchone()
+
+    if row is None:
+        return None
+
+    return Question(
+        id=row["id"],
+        book_id=row["book_id"],
+        question=row["question"],
+        topic=row["topic"],
+        difficulty=row["difficulty"],
+        reference_context=row["reference_context"],
+    )
+    
 if __name__ == "__main__":
     from tutor.books.repository import get_book_by_title
 
