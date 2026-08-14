@@ -10,3 +10,7 @@ data/*.db
 # Copyrighted source material
 books/*
 !books/.gitkeep
+
+# Local tutor state
+data/tutor.db
+data/vector_store.json
