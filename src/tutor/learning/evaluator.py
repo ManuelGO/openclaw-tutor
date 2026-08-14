@@ -39,7 +39,7 @@ def evaluate(
             "Clearly identify what the student understood and what important "
             "points are missing or incorrect. "
             "Be technically precise. Do not generalize exception behavior: "
-            "distinguish specific exceptions such as IndexError, StopIteration, "
+            "Distinguish IndexError, StopIteration, and TypeError when relevant. "
             "and TypeError when relevant. "
             "Give concise, educational feedback."
         ),

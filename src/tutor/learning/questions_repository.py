@@ -117,20 +117,58 @@ def get_question(question_id: str) -> Question | None:
         reference_context=row["reference_context"],
     )
     
-if __name__ == "__main__":
-    from tutor.books.repository import get_book_by_title
+def mark_question_answered(question_id: str) -> None:
+    with get_connection() as connection:
+        connection.execute(
+            """
+            UPDATE questions
+            SET status = 'answered'
+            WHERE id = ?
+            """,
+            (question_id,),
+        )
 
-    book = get_book_by_title("Fluent Python")
+def mark_question_sent(question_id: str) -> None:
+    with get_connection() as connection:
+        connection.execute(
+            """
+            UPDATE questions
+            SET
+                status = 'sent',
+                sent_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """,
+            (question_id,),
+        )
+        
+def get_active_question(book_id: str) -> Question | None:
+    with get_connection() as connection:
+        row = connection.execute(
+            """
+            SELECT
+                id,
+                book_id,
+                question,
+                topic,
+                difficulty,
+                reference_context
+            FROM questions
+            WHERE book_id = ?
+              AND status = 'sent'
+            ORDER BY sent_at DESC
+            LIMIT 1
+            """,
+            (book_id,),
+        ).fetchone()
 
-    if book is None:
-        raise RuntimeError("Fluent Python is not registered")
+    if row is None:
+        return None
 
-    questions = get_pending_questions(
-        book_id=book.id,
-        limit=4,
+    return Question(
+        id=row["id"],
+        book_id=row["book_id"],
+        question=row["question"],
+        topic=row["topic"],
+        difficulty=row["difficulty"],
+        reference_context=row["reference_context"],
     )
-
-    for question in questions:
-        print(f"[{question.difficulty}] {question.question}")
-        print(f"ID: {question.id}")
-        print()
