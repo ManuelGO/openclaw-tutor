@@ -50,6 +50,11 @@ def submit_answer(
     return evaluation
 
 def next_question(book_id: str) -> Question | None:
+    active_question = get_active_question(book_id)
+
+    if active_question is not None:
+        return active_question
+
     questions = get_pending_questions(
         book_id=book_id,
         limit=1,
