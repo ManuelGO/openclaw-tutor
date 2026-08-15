@@ -5,7 +5,7 @@ from tutor.books.models import Book
 from tutor.retrieval.search import search
 from typing import Literal
 from pydantic import BaseModel
-from dotenv import load_dotenv
+import tutor.config  # noqa: F401
 from openai import OpenAI
 from uuid import uuid4
 Difficulty = Literal["easy", "medium", "hard"]
@@ -61,7 +61,6 @@ def generate_questions(
     topic: str,
     count: int = 4,
 ) -> list[Question]:
-    load_dotenv()
     context = get_reference_context(book, topic)
     client = OpenAI()
     response = client.responses.parse(

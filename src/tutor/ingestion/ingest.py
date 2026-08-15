@@ -1,7 +1,7 @@
 from pathlib import Path
 import json
 
-from dotenv import load_dotenv
+import tutor.config  # noqa: F401
 from openai import OpenAI
 
 
@@ -30,8 +30,6 @@ def save_vector_store_id(vector_store_id: str) -> None:
 
 
 def main() -> None:
-    load_dotenv()
-
     client = OpenAI()
 
     vector_store_id = load_vector_store_id()

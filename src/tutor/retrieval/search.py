@@ -1,6 +1,4 @@
-
-
-from dotenv import load_dotenv
+import tutor.config  # noqa: F401
 from openai import OpenAI
 
 from openai.types.vector_store_search_response import VectorStoreSearchResponse
@@ -11,8 +9,6 @@ def search(
     query: str,
     limit: int = 5,
 ) -> list[VectorStoreSearchResponse]:
-    load_dotenv()
-
     client = OpenAI()
 
     results = client.vector_stores.search(

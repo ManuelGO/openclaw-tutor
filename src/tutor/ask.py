@@ -1,8 +1,8 @@
-from dotenv import load_dotenv
 from openai import OpenAI
 import sys
 from tutor.retrieval.search import search
 from tutor.books.models import Book
+import tutor.config  # noqa: F401
 
 def build_context(results) -> str:
     chunks = []
@@ -15,8 +15,6 @@ def build_context(results) -> str:
     return "\n\n---\n\n".join(chunks)
 
 def ask(book: Book, question: str) -> str:
-    load_dotenv()
-
     results = results = search(
                 book=book,
                 query=question,

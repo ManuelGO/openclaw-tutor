@@ -1,5 +1,4 @@
 import argparse
-
 from tutor.books.repository import get_book_by_title
 from tutor.learning.service import (
     next_question,

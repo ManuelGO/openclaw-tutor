@@ -1,8 +1,8 @@
 from pydantic import BaseModel, Field
-from dotenv import load_dotenv
 from openai import OpenAI
 from tutor.learning.answers import Answer
 from tutor.learning.questions import Question
+import tutor.config  # noqa: F401
 
 class Evaluation(BaseModel):
     score: int = Field(ge=0, le=100)
@@ -10,11 +10,6 @@ class Evaluation(BaseModel):
     strengths: list[str]
     gaps: list[str]
     
-from dotenv import load_dotenv
-from openai import OpenAI
-
-from tutor.learning.answers import Answer
-from tutor.learning.questions import Question
 from uuid import uuid4
 from tutor.learning.evaluations import AnswerEvaluation
 
@@ -22,8 +17,6 @@ def evaluate(
     question: Question,
     answer: Answer,
 ) -> Evaluation:
-    load_dotenv()
-
     client = OpenAI()
 
     response = client.responses.parse(
