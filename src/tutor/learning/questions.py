@@ -66,7 +66,7 @@ def generate_questions(
     response = client.responses.parse(
         model="gpt-5.1",
         instructions=(
-            "You are a tutor creating study questions about {book.title}. "
+            f"You are a tutor creating study questions about {book.title}. "
             "Create questions using only the supplied reference material. "
             "Questions should test understanding, not simple memorization. "
             "Do not provide the answers."

@@ -2,6 +2,7 @@ import argparse
 from tutor.books.repository import get_book_by_title
 from tutor.learning.service import (
     next_question,
+    study,
     submit_active_answer,
 )
 
@@ -19,9 +20,55 @@ def handle_next_question(book_title: str) -> None:
 
     print(f"\n🧠 {book.title}\n")
     print(question.question)
+    
+def handle_study(
+    book_title: str,
+    topic: str,
+) -> None:
+    book = get_book_by_title(book_title)
+
+    if book is None:
+        raise SystemExit(f'Book not found: "{book_title}"')
+
+    question = study(
+        book=book,
+        topic=topic,
+    )
+
+    print(f"\n🧠 {book.title}\n")
+    print(question.question)
     print(f"\nDifficulty: {question.difficulty}")
 
 
+def handle_answer(
+    book_title: str,
+    text: str,
+) -> None:
+    book = get_book_by_title(book_title)
+
+    if book is None:
+        raise SystemExit(f'Book not found: "{book_title}"')
+
+    try:
+        evaluation = submit_active_answer(
+            book_id=book.id,
+            text=text,
+        )
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+
+    print(f"\nScore: {evaluation.score}/100")
+
+    print(f"\nFeedback:\n{evaluation.feedback}")
+
+    print("\nStrengths:")
+    for strength in evaluation.strengths:
+        print(f"- {strength}")
+
+    print("\nGaps:")
+    for gap in evaluation.gaps:
+        print(f"- {gap}")
+        
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="tutor",
@@ -60,6 +107,23 @@ def main() -> None:
         required=True,
         help="Book title",
     )
+    
+    study_parser = subparsers.add_parser(
+    "study",
+    help="Start or continue a study session",
+    )
+
+    study_parser.add_argument(
+        "--book",
+        required=True,
+        help="Book title",
+    )
+
+    study_parser.add_argument(
+        "--topic",
+        required=True,
+        help="Topic to study",
+    )
 
     args = parser.parse_args()
 
@@ -72,34 +136,11 @@ def main() -> None:
             text=args.text,
     )
         
-def handle_answer(
-    book_title: str,
-    text: str,
-) -> None:
-    book = get_book_by_title(book_title)
-
-    if book is None:
-        raise SystemExit(f'Book not found: "{book_title}"')
-
-    try:
-        evaluation = submit_active_answer(
-            book_id=book.id,
-            text=text,
+    elif args.command == "study":
+        handle_study(
+            book_title=args.book,
+            topic=args.topic,
         )
-    except ValueError as exc:
-        raise SystemExit(str(exc)) from exc
-
-    print(f"\nScore: {evaluation.score}/100")
-
-    print(f"\nFeedback:\n{evaluation.feedback}")
-
-    print("\nStrengths:")
-    for strength in evaluation.strengths:
-        print(f"- {strength}")
-
-    print("\nGaps:")
-    for gap in evaluation.gaps:
-        print(f"- {gap}")
 
 
 if __name__ == "__main__":

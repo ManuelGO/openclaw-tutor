@@ -4,12 +4,16 @@ from tutor.db.database import get_connection
 from tutor.learning.answers import Answer
 from tutor.learning.evaluator import evaluate, build_evaluation
 from tutor.learning.evaluations import AnswerEvaluation
-from tutor.learning.questions import Question
+from tutor.learning.questions import (
+    Question,
+    generate_questions,
+)
 from tutor.learning.questions_repository import (
     get_active_question,
     get_pending_questions,
     get_question,
     mark_question_sent,
+    save_questions,
 )
 
 def submit_answer(
@@ -66,6 +70,38 @@ def next_question(book_id: str) -> Question | None:
     question = questions[0]
 
     mark_question_sent(question.id)
+
+    return question
+
+def study(
+    book,
+    topic: str,
+    batch_size: int = 4,
+) -> Question:
+    question = next_question(book.id)
+
+    if question is not None:
+        return question
+
+    questions = generate_questions(
+        book=book,
+        topic=topic,
+        count=batch_size,
+    )
+
+    if not questions:
+        raise RuntimeError(
+            f"Could not generate questions for book: {book.title}"
+        )
+
+    save_questions(questions)
+
+    question = next_question(book.id)
+
+    if question is None:
+        raise RuntimeError(
+            f"Could not activate a question for book: {book.title}"
+        )
 
     return question
 

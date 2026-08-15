@@ -26,7 +26,7 @@ def ask(book: Book, question: str) -> str:
     response = client.responses.create(
     model="gpt-5.1",
         instructions=(
-            "You are a tutor helping a student study {book.title}. "
+            f"You are a tutor helping a student study {book.title}. "
             "Answer using only the reference material provided. "
             "If the reference material does not contain enough information "
             "to answer the question, say so explicitly."
