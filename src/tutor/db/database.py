@@ -37,6 +37,9 @@ def init_db() -> None:
                 topic TEXT NOT NULL,
                 difficulty TEXT NOT NULL,
                 reference_context TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'pending'
+                    CHECK (status IN ('pending', 'sent', 'answered')),
+                sent_at TEXT,
                 created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
                 FOREIGN KEY (book_id) REFERENCES books(id)
