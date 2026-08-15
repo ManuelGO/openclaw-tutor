@@ -150,7 +150,7 @@ This uploads the PDF to an OpenAI Vector Store, indexes it, and saves the result
 python3 -m tutor.books.repository
 ```
 
-This reads `data/vector_store.json` and registers *Fluent Python* in the `books` table, linking the title to its vector store.
+This reads `data/vector_store.json` and registers the book in the `books` table, linking the title to its vector store. The title defaults to *Fluent Python*; pass another as an argument. Running it again returns the existing book instead of registering a duplicate.
 
 ## Usage
 
@@ -185,7 +185,8 @@ Returns the active question, or activates the next pending one. Prints `No pendi
 ### Ask a free-form question about the book
 
 ```bash
-python3 -m tutor.ask "What is the difference between an iterable and an iterator?"
+python3 -m tutor.ask "Fluent Python" \
+  "What is the difference between an iterable and an iterator?"
 ```
 
 A RAG-grounded lookup that sits outside the learning loop: nothing is persisted and no question lifecycle is touched.

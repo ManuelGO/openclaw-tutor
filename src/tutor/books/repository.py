@@ -46,12 +46,22 @@ def get_book(book_id: str) -> Book | None:
     )
 
 
-def register_existing_fluent_python() -> Book:
+def register_ingested_book(title: str = "Fluent Python") -> Book:
+    """Register the book held in the saved vector store state.
+
+    Bootstrap step for the ingestion flow: tutor.ingestion.ingest writes the
+    vector store id, this links it to a title in the database.
+    """
+    existing = get_book_by_title(title)
+
+    if existing is not None:
+        return existing
+
     data = json.loads(VECTOR_STORE_STATE.read_text())
 
     book = Book(
         id=str(uuid4()),
-        title="Fluent Python",
+        title=title,
         vector_store_id=data["vector_store_id"],
     )
 
@@ -80,7 +90,11 @@ def get_book_by_title(title: str) -> Book | None:
 
 
 if __name__ == "__main__":
-    book = register_existing_fluent_python()
+    import sys
+
+    title = sys.argv[1] if len(sys.argv) > 1 else "Fluent Python"
+
+    book = register_ingested_book(title)
 
     print("Book registered:")
     print(book)

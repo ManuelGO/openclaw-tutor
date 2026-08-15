@@ -89,28 +89,3 @@ def generate_questions(
         generated=response.output_parsed,
         context=context,
     )
-    
-       
-if __name__ == "__main__":
-    from tutor.books.repository import get_book_by_title
-
-    book = get_book_by_title("Fluent Python")
-
-    if book is None:
-        raise RuntimeError("Fluent Python is not registered")
-
-    questions = generate_questions(
-        book=book,
-        topic="iterables, iterators and the iter function",
-        count=4,
-    )
-    
-    from tutor.learning.questions_repository import save_questions
-
-    save_questions(questions)
-
-    for index, question in enumerate(questions, start=1):
-        print(f"\n{index}. [{question.difficulty}] {question.question}")
-        print(f"   ID: {question.id}")
-        print(f"   Book ID: {question.book_id}")
-        print(f"   Topic: {question.topic}")

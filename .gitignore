@@ -4,13 +4,13 @@ __pycache__/
 *.py[cod]
 .DS_Store
 
-# Local tutor data
-data/*.db
+# Build artifacts
+*.egg-info/
 
 # Copyrighted source material
 books/*
 !books/.gitkeep
 
 # Local tutor state
-data/tutor.db
+data/*.db
 data/vector_store.json

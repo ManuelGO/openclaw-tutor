@@ -1,17 +1,19 @@
+from uuid import uuid4
+
 from pydantic import BaseModel, Field
 from openai import OpenAI
 from tutor.learning.answers import Answer
+from tutor.learning.evaluations import AnswerEvaluation
 from tutor.learning.questions import Question
 import tutor.config  # noqa: F401
+
 
 class Evaluation(BaseModel):
     score: int = Field(ge=0, le=100)
     feedback: str
     strengths: list[str]
     gaps: list[str]
-    
-from uuid import uuid4
-from tutor.learning.evaluations import AnswerEvaluation
+
 
 def evaluate(
     question: Question,
@@ -65,36 +67,3 @@ def build_evaluation(
         strengths=evaluation.strengths,
         gaps=evaluation.gaps,
     )
-
-
-if __name__ == "__main__":
-    from tutor.learning.answers_repository import get_answers_for_question
-    from tutor.learning.questions_repository import get_question
-
-    question_id = "cebec66c-6dbf-4203-962a-8fb551c0c5a6"
-
-    question = get_question(question_id)
-
-    if question is None:
-        raise RuntimeError("Question not found")
-
-    answers = get_answers_for_question(question_id)
-
-    if not answers:
-        raise RuntimeError("No answers found")
-
-    evaluation = evaluate(
-        question=question,
-        answer=answers[-1],
-    )
-
-    print(f"\nScore: {evaluation.score}/100")
-    print(f"\nFeedback:\n{evaluation.feedback}")
-
-    print("\nStrengths:")
-    for strength in evaluation.strengths:
-        print(f"- {strength}")
-
-    print("\nGaps:")
-    for gap in evaluation.gaps:
-        print(f"- {gap}")

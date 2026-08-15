@@ -35,20 +35,20 @@ def main() -> None:
     vector_store_id = load_vector_store_id()
 
     if vector_store_id:
-        print(f"Vector Store existente: {vector_store_id}")
+        print(f"Existing Vector Store: {vector_store_id}")
         return
 
     if not BOOK_PATH.exists():
-        raise FileNotFoundError(f"No encuentro el libro: {BOOK_PATH}")
+        raise FileNotFoundError(f"Book not found: {BOOK_PATH}")
 
-    print(f"Creando Vector Store para {BOOK_PATH.name}...")
+    print(f"Creating Vector Store for {BOOK_PATH.name}...")
 
     vector_store = client.vector_stores.create(
         name="Fluent Python"
     )
 
-    print(f"Vector Store creado: {vector_store.id}")
-    print("Subiendo e indexando libro...")
+    print(f"Vector Store created: {vector_store.id}")
+    print("Uploading and indexing book...")
 
     with BOOK_PATH.open("rb") as book:
         result = client.vector_stores.files.upload_and_poll(
@@ -56,11 +56,11 @@ def main() -> None:
             file=book,
         )
 
-    print(f"Estado de indexación: {result.status}")
+    print(f"Indexing status: {result.status}")
 
     save_vector_store_id(vector_store.id)
 
-    print(f"Vector Store ID guardado en {STATE_PATH}")
+    print(f"Vector Store ID saved to {STATE_PATH}")
 
 
 if __name__ == "__main__":

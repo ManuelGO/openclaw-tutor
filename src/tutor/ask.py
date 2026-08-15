@@ -1,5 +1,4 @@
 from openai import OpenAI
-import sys
 from tutor.retrieval.search import search
 from tutor.books.models import Book
 import tutor.config  # noqa: F401
@@ -15,11 +14,12 @@ def build_context(results) -> str:
     return "\n\n---\n\n".join(chunks)
 
 def ask(book: Book, question: str) -> str:
-    results = results = search(
-                book=book,
-                query=question,
-                limit=3,
-            )
+    results = search(
+        book=book,
+        query=question,
+        limit=3,
+    )
+
     context = build_context(results)
 
     client = OpenAI()
@@ -47,17 +47,18 @@ if __name__ == "__main__":
 
     from tutor.books.repository import get_book_by_title
 
-    if len(sys.argv) < 2:
+    if len(sys.argv) < 3:
         raise SystemExit(
-            'Usage: python3 -m tutor.ask "your question"'
+            'Usage: python3 -m tutor.ask "Book Title" "your question"'
         )
 
-    book = get_book_by_title("Fluent Python")
+    book_title = sys.argv[1]
+    book = get_book_by_title(book_title)
 
     if book is None:
-        raise RuntimeError("Fluent Python is not registered")
+        raise SystemExit(f'Book not found: "{book_title}"')
 
-    question = " ".join(sys.argv[1:])
+    question = " ".join(sys.argv[2:])
     answer = ask(book, question)
 
     print("\n--- ANSWER ---\n")
